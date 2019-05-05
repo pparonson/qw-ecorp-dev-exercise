@@ -1,6 +1,17 @@
+Assumptions:
+  Provide some basic user authentication (via API Key)
+  Provide some basic error and failure handling
+
+Questions:
+  Should an end user have ability to retrieve customer data directly
+  (ie directly through an explicit customer route)?
+
+  Should there be a requirement to delete an agent?
+
+
+Return List of all Agents
 GET: [domain]/agents
-  Return List of all Agents
-  Example:
+  Example:  http://localhost:3000/agents?api_key=123456789&page=1
 
   Query String:
     api_key, string, required
@@ -10,9 +21,9 @@ GET: [domain]/agents
     object
       results
 
+Get agent Details
 GET: /movie/{movie_id}
-  Get agent Details
-  Example:
+  Example:  http://localhost:3000/agents/101?api_key=123456789
 
   Query String:
     api_key, string, required

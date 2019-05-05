@@ -6,6 +6,15 @@ const agentsRouter = require("./routes/agents")
 const app = express()
 const PORT = 3000
 
+// authenticate user at application level
+app.use((req, res, next) => {
+  if (req.query.api_key !== "123456789") {
+    res.send("<h2>Invalid API Key</h2>")
+  } else {
+    next()
+  }
+})
+
 app.use(express.static( path.join(__dirname, "public") ))
 
 app.use(express.json())
