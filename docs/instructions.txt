@@ -1,0 +1,21 @@
+GET: [domain]/agents
+  Return List of all Agents
+  Example:
+
+  Query String:
+    api_key, string, required
+    page, integer, specify which page to query, optional
+
+  Response: application/json
+    object
+      results
+
+GET: /movie/{movie_id}
+  Get agent Details
+  Example:
+
+  Query String:
+    api_key, string, required
+
+  Response: application/json
+    object
