@@ -1,5 +1,11 @@
+const path = require("path")
+const fs = require("fs")
 const router = require("express").Router()
 const agents = require("../data/agents")
+
+// global to increment agent._id
+let index = agents.length - 1
+let agentsCreated = agents[index]._id
 
 // GET agents page: /agents/
 router.get("/", (req, res, next) => {
@@ -12,7 +18,7 @@ router.get("/", (req, res, next) => {
 
   // return an obj with a results prop via obj literal syntax
   results.length > 0 ? res.json({page, results}) :
-    res.send("<h2>None Found</h2>")
+    res.json({msg: "None found"})
 })
 
 router.get("/:agentId", (req, res, next) => {
@@ -21,8 +27,29 @@ router.get("/:agentId", (req, res, next) => {
   // find method returns undefined if no matching id
   let result = agents.find( agent => agent._id === agentId )
 
-  result !== undefined ? res.json(result) :
-    res.send("Agent not found.")
+  result !== undefined ? res.json(result) : res.json({msg: "Not found"})
+})
+
+router.post("/", (req, res, next) => {
+  const agentId = ++agentsCreated
+  const agent = {
+    ...req.body
+    , _id: agentId
+  }
+  const newAgents = [...agents, agent]
+
+  fs.writeFile(
+    path.resolve(__dirname, "../data/agents.json")
+    , JSON.stringify(newAgents, null, 2)
+    , err => {
+      if (err) {
+          res.json({msg: err})
+          return;
+      }
+      res.json({msg: "A new agent has been created"})
+    }
+  )
+
 })
 
 module.exports = router

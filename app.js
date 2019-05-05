@@ -9,7 +9,9 @@ const PORT = 3000
 // authenticate user at application level
 app.use((req, res, next) => {
   if (req.query.api_key !== "123456789") {
-    res.send("<h2>Invalid API Key</h2>")
+    // 401: Unauthorized
+    res.status(401)
+    res.json("Invalid API Key")
   } else {
     next()
   }

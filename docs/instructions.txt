@@ -9,24 +9,43 @@ Questions:
   Should there be a requirement to delete an agent?
 
 
-Return List of all Agents
-GET: [domain]/agents
+Return List of all agents
+GET: /agents
   Example:  http://localhost:3000/agents?api_key=123456789&page=1
-
   Query String:
     api_key, string, required
     page, integer, specify which page to query, optional
-
   Response: application/json
     object
       results
 
-Get agent Details
-GET: /movie/{movie_id}
-  Example:  http://localhost:3000/agents/101?api_key=123456789
 
+Add a new agent
+POST: /agents
+  Example: http://localhost:3000/agents?api_key=123456789
+  Example body:
+  {
+    "name": "Jane Doe",
+    "address": "123 Main Street ",
+    "city": "Golden",
+    "state": "CO",
+    "zipCode": "80403",
+    "tier": 1,
+    "phone":{
+        "primary": "303-123-4567",
+        "mobile": "720-987-6543"
+    }
+  }
   Query String:
     api_key, string, required
+  Response: application/json
+    object
 
+
+Get agent Details
+GET: /agents/{:agentId}
+  Example:  http://localhost:3000/agents/101?api_key=123456789
+  Query String:
+    api_key, string, required
   Response: application/json
     object
