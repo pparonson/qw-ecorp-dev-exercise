@@ -31,12 +31,19 @@ router.get("/:agentId", (req, res, next) => {
 })
 
 router.post("/", (req, res, next) => {
-  const agentId = ++agentsCreated
   const agent = {
-    ...req.body
-    , _id: agentId
+    _id: ++agentsCreated
+    , ...req.body
   }
-  const newAgents = [...agents, agent]
+  // TODO: something weird is going on here with the build up of the new array..
+  // agentsArr is a temp work-around
+  const agentsArr = JSON.parse(
+    fs.readFileSync(
+      path.resolve(
+        __dirname
+        , "../data/agents.json")))
+
+  const newAgents = [...agentsArr, agent]
 
   fs.writeFile(
     path.resolve(__dirname, "../data/agents.json")
