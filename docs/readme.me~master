@@ -1,5 +1,0 @@
-
-Instructions
-Create a document/text file with a list of possible assumptions that you would make based on the Feature Criteria / Business requirements requested below.
-Please note any questions you would surface to the ScrumMaster/PM or Business Stakeholders/Product Owners regarding the specifications below.
-Create an API Solution in your preferred language/technology-stack that will use the provided json files as the Minimally Viable Product iteration’s data source (please keep in mind, even though this is a small static data set – please consider API application performance and expect that the API would be hooked up to a larger data store that would involve hundreds of thousands of records).
