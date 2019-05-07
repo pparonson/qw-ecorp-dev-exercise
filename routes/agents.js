@@ -25,13 +25,14 @@ router.get("/:agentId", (req, res, next) => {
   const agentId = parseInt(req.params.agentId)
 
   // find method returns undefined if no matching id
-  let result = agents.find( agent => agent._id === agentId )
+  let agent = agents.find( agent => agent._id === agentId )
 
-  result !== undefined ? res.json(result) : res.json({msg: "Not found"})
+  agent !== undefined ? res.json(agent) : res.json({msg: "Not found"})
 })
 
 router.post("/", (req, res, next) => {
   // req content-type validation
+  // this validation snippet should probably exist as a helper fn or express middleware
   if (!req.is("application/json")) {
     res.json({msg: "content-type must be application/json"})
     return
@@ -60,21 +61,51 @@ router.post("/", (req, res, next) => {
           res.json({msg: err})
           return
       }
-      res.json({msg: "A new agent has been created"})
+      res.json({msg: "Success"})
     }
   )
 })
 
-// router.put("/:agentId", (req, res, next) => {
-//   const agentId = parseInt(req.params.agentId)
-//   const agentIndex = agents.findIndex(agent => agent._id === agentId)
-//   if (agentIndex < 0 || agentIndex >= agents.length) {
-//     res.json({msg: "Agent not found"})
-//     return
-//   }
-//   const newAgent = {
-//     ...agents[agentIndex]
-//   }
-// })
+router.patch("/:agentId", (req, res, next) => {
+  // req content-type validation
+  if (!req.is("application/json")) {
+    res.json({msg: "content-type must be application/json"})
+    return
+  }
+
+  const agentsArr = JSON.parse(
+    fs.readFileSync(
+      path.resolve(
+        __dirname
+        , "../data/agents.json")))
+
+  const agentId = parseInt(req.params.agentId)
+  const agentIndex = agentsArr.findIndex(agent => agent._id === agentId)
+
+  if (agentIndex < 0) {
+    res.json({msg: `Agent index: ${agentIndex} not found`})
+    return
+  }
+
+  const updatedAgent = {
+    ...agentsArr[agentIndex]
+    , ...req.body
+  }
+
+  // NOTE: splice mutates the orig array
+  agentsArr.splice(agentIndex, 1, updatedAgent)
+
+  fs.writeFile(
+    path.resolve(__dirname, "../data/agents.json")
+    , JSON.stringify(agentsArr, null, 2)
+    , err => {
+      if (err) {
+          res.json({msg: err})
+          return
+      }
+      res.json({msg: "Success."})
+    }
+  )
+})
 
 module.exports = router
