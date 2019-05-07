@@ -1,11 +1,10 @@
 const path = require("path")
 const fs = require("fs")
 const router = require("express").Router()
-const agents = require("../data/agents")
 
 // global to increment agent._id
-let index = agents.length - 1
-let agentsCreated = agents[index]._id
+let index = getJSONFile().length - 1
+let agentsCreated = getJSONFile()[index]._id
 
 // GET agents page: /agents/
 router.get("/", (req, res, next) => {
@@ -14,10 +13,12 @@ router.get("/", (req, res, next) => {
 
   // return a limited 20 items / page to allow scale
   const startIndex = (page - 1) * 20
-  let results = agents.slice( startIndex, startIndex + 19 )
+  // NOTE: slice method does not mutate the orig array
+  const agentsArr = getJSONFile().slice( startIndex, startIndex + 19 )
 
   // return an obj with a results prop via obj literal syntax
-  results.length > 0 ? res.json({page, results}) :
+  agentsArr.length > 0 ?
+    res.json({page, agentsArr}) :
     res.json({msg: "None found"})
 })
 
@@ -25,9 +26,11 @@ router.get("/:agentId", (req, res, next) => {
   const agentId = parseInt(req.params.agentId)
 
   // find method returns undefined if no matching id
-  let agent = agents.find( agent => agent._id === agentId )
+  let agent = getJSONFile().find( agent => agent._id === agentId )
 
-  agent !== undefined ? res.json(agent) : res.json({msg: "Not found"})
+  agent !== undefined ?
+    res.json(agent) :
+    res.json({msg: "Not found"})
 })
 
 router.post("/", (req, res, next) => {
@@ -42,28 +45,9 @@ router.post("/", (req, res, next) => {
     _id: ++agentsCreated
     , ...req.body
   }
-  // TODO: something weird is going on with the appending of new obj the array..
-  // fs.readFileSync to get access to the array is a temp work-around and this is
-  // probably okay for now since the the json datasource is temp
-  const agentsArr = JSON.parse(
-    fs.readFileSync(
-      path.resolve(
-        __dirname
-        , "../data/agents.json")))
 
-  const newAgents = [...agentsArr, agent]
-
-  fs.writeFile(
-    path.resolve(__dirname, "../data/agents.json")
-    , JSON.stringify(newAgents, null, 2)
-    , err => {
-      if (err) {
-          res.json({msg: err})
-          return
-      }
-      res.json({msg: "Success"})
-    }
-  )
+  const agents = [...getJSONFile(), agent]
+  setJSONFile(req, res, next, agents)
 })
 
 router.patch("/:agentId", (req, res, next) => {
@@ -73,14 +57,9 @@ router.patch("/:agentId", (req, res, next) => {
     return
   }
 
-  const agentsArr = JSON.parse(
-    fs.readFileSync(
-      path.resolve(
-        __dirname
-        , "../data/agents.json")))
-
+  let agents = getJSONFile()
   const agentId = parseInt(req.params.agentId)
-  const agentIndex = agentsArr.findIndex(agent => agent._id === agentId)
+  const agentIndex = agents.findIndex(agent => agent._id === agentId)
 
   if (agentIndex < 0) {
     res.json({msg: `Agent index: ${agentIndex} not found`})
@@ -88,24 +67,36 @@ router.patch("/:agentId", (req, res, next) => {
   }
 
   const updatedAgent = {
-    ...agentsArr[agentIndex]
+    ...agents[agentIndex]
     , ...req.body
   }
 
   // NOTE: splice mutates the orig array
-  agentsArr.splice(agentIndex, 1, updatedAgent)
+  agents.splice(agentIndex, 1, updatedAgent)
+  setJSONFile(req, res, next, agents)
+})
 
+// helpers
+function getJSONFile() {
+  return JSON.parse(
+    fs.readFileSync(
+      path.resolve(
+        __dirname
+        , "../data/agents.json")))
+}
+
+function setJSONFile(req, res, next, arr) {
   fs.writeFile(
     path.resolve(__dirname, "../data/agents.json")
-    , JSON.stringify(agentsArr, null, 2)
+    , JSON.stringify(arr, null, 2)
     , err => {
       if (err) {
           res.json({msg: err})
           return
       }
-      res.json({msg: "Success."})
+      res.json({msg: "Success"})
     }
   )
-})
+}
 
 module.exports = router
