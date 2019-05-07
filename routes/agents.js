@@ -31,12 +31,19 @@ router.get("/:agentId", (req, res, next) => {
 })
 
 router.post("/", (req, res, next) => {
+  // req content-type validation
+  if (!req.is("application/json")) {
+    res.json({msg: "content-type must be application/json"})
+    return
+  }
+
   const agent = {
     _id: ++agentsCreated
     , ...req.body
   }
-  // TODO: something weird is going on here with the build up of the new array..
-  // agentsArr is a temp work-around
+  // TODO: something weird is going on with the appending of new obj the array..
+  // fs.readFileSync to get access to the array is a temp work-around and this is
+  // probably okay for now since the the json datasource is temp
   const agentsArr = JSON.parse(
     fs.readFileSync(
       path.resolve(
@@ -51,12 +58,23 @@ router.post("/", (req, res, next) => {
     , err => {
       if (err) {
           res.json({msg: err})
-          return;
+          return
       }
       res.json({msg: "A new agent has been created"})
     }
   )
-
 })
+
+// router.put("/:agentId", (req, res, next) => {
+//   const agentId = parseInt(req.params.agentId)
+//   const agentIndex = agents.findIndex(agent => agent._id === agentId)
+//   if (agentIndex < 0 || agentIndex >= agents.length) {
+//     res.json({msg: "Agent not found"})
+//     return
+//   }
+//   const newAgent = {
+//     ...agents[agentIndex]
+//   }
+// })
 
 module.exports = router

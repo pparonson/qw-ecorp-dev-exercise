@@ -50,18 +50,5 @@
       "primary": "714-765-2349",
       "mobile": "714-496-3288"
     }
-  },
-  {
-    "_id": 1989,
-    "name": "Elle Belle",
-    "address": "123 Maple Lane ",
-    "city": "Highlands Ranch",
-    "state": "CO",
-    "zipCode": "80129",
-    "tier": 1,
-    "phone": {
-      "primary": "303-123-2345",
-      "mobile": "720-123-3211"
-    }
   }
 ]
