@@ -83,13 +83,8 @@ router.patch("/:agentId", (req, res, next) => {
 
 // List all customers associated an agent's INT ID
 router.get("/:agentId/customers", (req, res, next) => {
-  // let page = req.query.page
-  // if (page === undefined) {page = 1}
-  //
-  // // return a limited 20 items / page to allow scale
-  // const startIndex = (page - 1) * 20
-
   const agentId = parseInt(req.params.agentId)
+
   // find method returns undefined if no matching id
   let agent = getJSONFile(agentsPartialPath)
     .find( agent => agent._id === agentId )
@@ -164,14 +159,14 @@ router.patch("/:agentId/customers/:customerId", (req, res, next) => {
   const customerIndex = customers
     .findIndex(customer => customer._id === customerId)
 
-  if (customers[customerIndex].agent_id !== agentId) {
-    res.json({msg: "Invalid customer"})
+  // findIndex return -1 if no value is found
+  if (customerIndex < 0) {
+    res.json({msg: `Customer not found`})
     return
   }
 
-  // findIndex return -1 if no value is found
-  if (customerIndex < 0) {
-    res.json({msg: `Customer index: ${customerIndex} not found`})
+  if (customers[customerIndex].agent_id !== agentId) {
+    res.json({msg: "Invalid customer"})
     return
   }
 
@@ -182,6 +177,37 @@ router.patch("/:agentId/customers/:customerId", (req, res, next) => {
 
   // NOTE: splice mutates the orig array
   customers.splice(customerIndex, 1, updatedCustomer)
+  setJSONFile(req, res, next, customersPartialPath, customers)
+})
+
+// Delete existing customer
+router.delete("/:agentId/customers/:customerId", (req, res, next) => {
+  // req content-type validation
+  if (!req.is("application/json")) {
+    res.json({msg: "content-type must be application/json"})
+    return
+  }
+
+  const customerId = parseInt(req.params.customerId)
+  const agentId = parseInt(req.params.agentId)
+
+  let customers = getJSONFile(customersPartialPath)
+  const customerIndex = customers
+    .findIndex(customer => customer._id === customerId)
+
+  // findIndex return -1 if no value is found
+  if (customerIndex < 0) {
+    res.json({msg: `Customer not found`})
+    return
+  }
+
+  if (customers[customerIndex].agent_id !== agentId) {
+    res.json({msg: "Invalid customer"})
+    return
+  }
+
+  // NOTE: splice mutates the orig array
+  customers.splice(customerIndex, 1)
   setJSONFile(req, res, next, customersPartialPath, customers)
 })
 
