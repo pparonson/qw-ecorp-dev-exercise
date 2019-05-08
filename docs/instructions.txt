@@ -3,7 +3,6 @@ ASSUMPTIONS:
   2. I provide some very basic error and failure handling
   3. Database persistence with async calls could improve scalability of this app
 
-
 QUESTIONS:
   1. Should an end user have ability to retrieve customers data directly
   (ie directly through an explicit customers route)?
@@ -20,7 +19,6 @@ GET: /agents
   Response: application/json
     object
       results
-
 
 Add new agent
 POST: /agents
