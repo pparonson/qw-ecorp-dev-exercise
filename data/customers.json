@@ -4,7 +4,7 @@
     "agent_id": 1987,
     "guid": "54fc8606-0630-42f9-9e3c-716772df09bf",
     "isActive": true,
-    "balance": "$1,578.40",
+    "balance": "$3,500.00",
     "age": 57,
     "eyeColor": "blue",
     "name": {
@@ -2122,33 +2122,6 @@
     "phone": "+1 (992) 542-2711",
     "address": "193 Grove Place, Warren, Michigan, 6954",
     "registered": "Tuesday, February 14, 2017 6:14 PM",
-    "latitude": "-58.511774",
-    "longitude": "-26.099681",
-    "tags": [
-      "esse",
-      "culpa",
-      "culpa",
-      "sit",
-      "exercitation"
-    ]
-  },
-  {
-    "_id": 9989,
-    "agent_id": 101,
-    "guid": "f7489c58-2816-44d8-b800-fa9d1f44aca0",
-    "isActive": false,
-    "balance": "$999,999.99",
-    "age": 4,
-    "eyeColor": "blue",
-    "name": {
-      "first": "Elle",
-      "last": "Belle"
-    },
-    "company": "eCorp",
-    "email": "elle.belle@gmail.com",
-    "phone": "+1 (303) 123-4567",
-    "address": "999 Maple Rd, Highlands Ranch, Colorado, 80129",
-    "registered": "Sunday, June 9, 2019 9:30 PM",
     "latitude": "-58.511774",
     "longitude": "-26.099681",
     "tags": [

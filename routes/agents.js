@@ -27,7 +27,7 @@ router.get("/:agentId", (req, res, next) => {
   const agentId = parseInt(req.params.agentId)
 
   // find method returns undefined if no matching id
-  let agent = getJSONFile(agentsPartialPath)
+  const agent = getJSONFile(agentsPartialPath)
     .find( agent => agent._id === agentId )
 
   agent !== undefined ?
@@ -133,7 +133,7 @@ router.get("/:agentId/customers/:customerId", (req, res, next) => {
   const customerId = parseInt(req.params.customerId)
 
   // find method returns undefined if no matching id
-  let customer = getJSONFile(customersPartialPath)
+  const customer = getJSONFile(customersPartialPath)
     .find(customer => customer._id === customerId)
 
   // if statement is evaluating a returned value
@@ -147,6 +147,42 @@ router.get("/:agentId/customers/:customerId", (req, res, next) => {
   } else {
     res.json({msg: "Not found"})
   }
+})
+
+// Update customer details
+router.patch("/:agentId/customers/:customerId", (req, res, next) => {
+  // req content-type validation
+  if (!req.is("application/json")) {
+    res.json({msg: "content-type must be application/json"})
+    return
+  }
+
+  const customerId = parseInt(req.params.customerId)
+  const agentId = parseInt(req.params.agentId)
+
+  let customers = getJSONFile(customersPartialPath)
+  const customerIndex = customers
+    .findIndex(customer => customer._id === customerId)
+
+  if (customers[customerIndex].agent_id !== agentId) {
+    res.json({msg: "Invalid customer"})
+    return
+  }
+
+  // findIndex return -1 if no value is found
+  if (customerIndex < 0) {
+    res.json({msg: `Customer index: ${customerIndex} not found`})
+    return
+  }
+
+  const updatedCustomer = {
+    ...customers[customerIndex]
+    , ...req.body
+  }
+
+  // NOTE: splice mutates the orig array
+  customers.splice(customerIndex, 1, updatedCustomer)
+  setJSONFile(req, res, next, customersPartialPath, customers)
 })
 
 
