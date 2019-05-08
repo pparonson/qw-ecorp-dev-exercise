@@ -54,7 +54,7 @@ router.post("/", (req, res, next) => {
 })
 
 // Update agent details
-router.patch("/:agentId", (req, res, next) => {
+router.put("/:agentId", (req, res, next) => {
   // req content-type validation
   if (!req.is("application/json")) {
     res.json({msg: "content-type must be application/json"})
@@ -145,7 +145,7 @@ router.get("/:agentId/customers/:customerId", (req, res, next) => {
 })
 
 // Update customer details
-router.patch("/:agentId/customers/:customerId", (req, res, next) => {
+router.put("/:agentId/customers/:customerId", (req, res, next) => {
   // req content-type validation
   if (!req.is("application/json")) {
     res.json({msg: "content-type must be application/json"})

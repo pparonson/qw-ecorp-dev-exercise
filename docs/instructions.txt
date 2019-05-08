@@ -53,7 +53,7 @@ GET: /agents/{:agentId}
     object
 
 Update agent details
-PATCH: /agents/{:agentId}
+PUT: /agents/{:agentId}
   Example:  http://localhost:3000/agents/101?api_key=123456789
   Example body:
   {
@@ -82,8 +82,8 @@ GET: /agents/{:agentId}/customers
     object
 
 Add new customer
-POST: /customers
-  Example: http://localhost:3000/customers?api_key=123456789
+POST: /agents/{:agentId}/customers
+  Example: http://localhost:3000/agents/467/customers?api_key=123456789
   Example body:
   {
       "_id": 101,
@@ -112,6 +112,51 @@ POST: /customers
           "exercitation"
       ]
   }
+  Query String:
+    api_key, string, required
+  Response: application/json
+    object
+
+Update customer details
+PUT: /agents/{:agentId}/customers/{:customerId}
+  Example:  http://localhost:3000/agents/467/customers?api_key=123456789
+  Example body:
+  {
+      "_id": 101,
+      "agent_id": 467,
+      "guid": "f7489c58-2816-44d8-b800-fa9d1f44aca0",
+      "isActive": false,
+      "balance": "$2,657.47",
+      "age": 33,
+      "eyeColor": "green",
+      "name": {
+          "first": "Solis",
+          "last": "Decker"
+      },
+      "company": "VALPREAL",
+      "email": "solis.decker@valpreal.biz",
+      "phone": "+1 (992) 542-2711",
+      "address": "193 Grove Place, Warren, Michigan, 6954",
+      "registered": "Tuesday, February 14, 2017 6:14 PM",
+      "latitude": "-58.511774",
+      "longitude": "-26.099681",
+      "tags": [
+          "esse",
+          "culpa",
+          "culpa",
+          "sit",
+          "exercitation"
+      ]
+  }
+  Query String:
+    api_key, string, required
+  Response: application/json
+    object
+
+Delete customer details
+DELETE: /agents/{:agentId}/customers/{:customerId}
+  Example:  http://localhost:3000/agents/467/customers?api_key=123456789
+
   Query String:
     api_key, string, required
   Response: application/json
