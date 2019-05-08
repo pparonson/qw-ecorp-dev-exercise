@@ -127,6 +127,28 @@ router.post("/:agentId/customers", (req, res, next) => {
   setJSONFile(req, res, next, customersPartialPath, customers)
 })
 
+// Get customer details
+router.get("/:agentId/customers/:customerId", (req, res, next) => {
+  const agentId = parseInt(req.params.agentId)
+  const customerId = parseInt(req.params.customerId)
+
+  // find method returns undefined if no matching id
+  let customer = getJSONFile(customersPartialPath)
+    .find(customer => customer._id === customerId)
+
+  // if statement is evaluating a returned value
+  // nested if statement is validating the customer
+  if (customer !== undefined) {
+    if (customer.agent_id === agentId) {
+      res.json(customer)
+    } else {
+      res.json({msg: "Invalid customer"})
+    }
+  } else {
+    res.json({msg: "Not found"})
+  }
+})
+
 
 // helpers
 function getMaxId(arr) {
