@@ -57,15 +57,15 @@ PUT: /agents/{:agentId}
   Example:  http://localhost:3000/agents/101?api_key=123456789
   Example body:
   {
-    "name": "Jane Doe",
-    "address": "123 Main Street ",
-    "city": "Golden",
+    "name": "Mary Smith",
+    "address": "123 16th Street ",
+    "city": "Denver",
     "state": "CO",
-    "zipCode": "80403",
+    "zipCode": "80204",
     "tier": 1,
     "phone":{
-        "primary": "303-123-4567",
-        "mobile": "720-987-6543"
+        "primary": "303-555-5555",
+        "mobile": "720-555-5555"
     }
   }
   Query String:
@@ -81,26 +81,33 @@ GET: /agents/{:agentId}/customers
   Response: application/json
     object
 
+Get customer details
+GET: /agents/{:agentId}/customers/{:customerId}
+  Example:  http://localhost:3000/agents/467/customers/4884?api_key=123456789
+  Query String:
+    api_key, string, required
+  Response: application/json
+    object
+
 Add new customer
 POST: /agents/{:agentId}/customers
   Example: http://localhost:3000/agents/467/customers?api_key=123456789
   Example body:
   {
-      "_id": 101,
       "agent_id": 467,
       "guid": "f7489c58-2816-44d8-b800-fa9d1f44aca0",
       "isActive": false,
-      "balance": "$2,657.47",
+      "balance": "$999,999.99",
       "age": 33,
       "eyeColor": "green",
       "name": {
-          "first": "Solis",
-          "last": "Decker"
+          "first": "Elle",
+          "last": "Belle"
       },
-      "company": "VALPREAL",
-      "email": "solis.decker@valpreal.biz",
+      "company": "eCorp",
+      "email": "elle.belle@email.com",
       "phone": "+1 (992) 542-2711",
-      "address": "193 Grove Place, Warren, Michigan, 6954",
+      "address": "123 Silver Rd, Highlands, Colorado, 80201",
       "registered": "Tuesday, February 14, 2017 6:14 PM",
       "latitude": "-58.511774",
       "longitude": "-26.099681",
@@ -119,24 +126,23 @@ POST: /agents/{:agentId}/customers
 
 Update customer details
 PUT: /agents/{:agentId}/customers/{:customerId}
-  Example:  http://localhost:3000/agents/467/customers?api_key=123456789
+  Example:  http://localhost:3000/agents/467/customers/4884?api_key=123456789
   Example body:
   {
-      "_id": 101,
       "agent_id": 467,
       "guid": "f7489c58-2816-44d8-b800-fa9d1f44aca0",
       "isActive": false,
-      "balance": "$2,657.47",
+      "balance": "$888.00",
       "age": 33,
       "eyeColor": "green",
       "name": {
-          "first": "Solis",
-          "last": "Decker"
+          "first": "Preston",
+          "last": "Aronson"
       },
-      "company": "VALPREAL",
-      "email": "solis.decker@valpreal.biz",
+      "company": "eCorp",
+      "email": "preston.aronson@email.com",
       "phone": "+1 (992) 542-2711",
-      "address": "193 Grove Place, Warren, Michigan, 6954",
+      "address": "123 Main Place, Denver, Colorado, 80205",
       "registered": "Tuesday, February 14, 2017 6:14 PM",
       "latitude": "-58.511774",
       "longitude": "-26.099681",
@@ -155,7 +161,7 @@ PUT: /agents/{:agentId}/customers/{:customerId}
 
 Delete customer details
 DELETE: /agents/{:agentId}/customers/{:customerId}
-  Example:  http://localhost:3000/agents/467/customers?api_key=123456789
+  Example:  http://localhost:3000/agents/467/customers/4884?api_key=123456789
 
   Query String:
     api_key, string, required
