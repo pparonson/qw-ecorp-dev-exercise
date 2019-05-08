@@ -2,11 +2,10 @@ const path = require("path")
 const fs = require("fs")
 const router = require("express").Router()
 
-// global to increment agent._id
-let index = getJSONFile().length - 1
-let agentsCreated = getJSONFile()[index]._id
+const agentsPartialPath = "../data/agents.json"
+const customersPartialPath = "../data/customers.json"
 
-// GET agents page: /agents/
+// List all agents
 router.get("/", (req, res, next) => {
   let page = req.query.page
   if (page === undefined) {page = 1}
@@ -14,25 +13,29 @@ router.get("/", (req, res, next) => {
   // return a limited 20 items / page to allow scale
   const startIndex = (page - 1) * 20
   // NOTE: slice method does not mutate the orig array
-  const agentsArr = getJSONFile().slice( startIndex, startIndex + 19 )
+  const results = getJSONFile(agentsPartialPath)
+    .slice( startIndex, startIndex + 19 )
 
   // return an obj with a results prop via obj literal syntax
-  agentsArr.length > 0 ?
-    res.json({page, agentsArr}) :
+  results.length > 0 ?
+    res.json({page, results}) :
     res.json({msg: "None found"})
 })
 
+// Get agent details
 router.get("/:agentId", (req, res, next) => {
   const agentId = parseInt(req.params.agentId)
 
   // find method returns undefined if no matching id
-  let agent = getJSONFile().find( agent => agent._id === agentId )
+  let agent = getJSONFile(agentsPartialPath)
+    .find( agent => agent._id === agentId )
 
   agent !== undefined ?
     res.json(agent) :
     res.json({msg: "Not found"})
 })
 
+// Add new agent
 router.post("/", (req, res, next) => {
   // req content-type validation
   // this validation snippet should probably exist as a helper fn or express middleware
@@ -42,14 +45,15 @@ router.post("/", (req, res, next) => {
   }
 
   const agent = {
-    _id: ++agentsCreated
+    _id: getMaxId( getJSONFile(agentsPartialPath) ) + 1
     , ...req.body
   }
 
-  const agents = [...getJSONFile(), agent]
-  setJSONFile(req, res, next, agents)
+  const agents = [...getJSONFile(agentsPartialPath), agent]
+  setJSONFile(req, res, next, agentsPartialPath, agents)
 })
 
+// Update agent details
 router.patch("/:agentId", (req, res, next) => {
   // req content-type validation
   if (!req.is("application/json")) {
@@ -57,10 +61,11 @@ router.patch("/:agentId", (req, res, next) => {
     return
   }
 
-  let agents = getJSONFile()
+  let agents = getJSONFile(agentsPartialPath)
   const agentId = parseInt(req.params.agentId)
   const agentIndex = agents.findIndex(agent => agent._id === agentId)
 
+  // findIndex return -1 if no value is found
   if (agentIndex < 0) {
     res.json({msg: `Agent index: ${agentIndex} not found`})
     return
@@ -73,21 +78,74 @@ router.patch("/:agentId", (req, res, next) => {
 
   // NOTE: splice mutates the orig array
   agents.splice(agentIndex, 1, updatedAgent)
-  setJSONFile(req, res, next, agents)
+  setJSONFile(req, res, next, agentsPartialPath, agents)
 })
 
+// List all customers associated an agent's INT ID
+router.get("/:agentId/customers", (req, res, next) => {
+  // let page = req.query.page
+  // if (page === undefined) {page = 1}
+  //
+  // // return a limited 20 items / page to allow scale
+  // const startIndex = (page - 1) * 20
+
+  const agentId = parseInt(req.params.agentId)
+  // find method returns undefined if no matching id
+  let agent = getJSONFile(agentsPartialPath)
+    .find( agent => agent._id === agentId )
+  let customers = getJSONFile(customersPartialPath)
+    .filter(customer => customer.agent_id === agent._id)
+  let results = customers.map(customer => {
+    return {
+      last: customer.name.last
+      , first: customer.name.first
+      , city: getCity(customer.address)
+    }
+  })
+
+  // return an obj with a results prop via obj literal syntax
+  results.length > 0 ?
+    res.json({results}) :
+    res.json({msg: "None found"})
+})
+
+// Add new customer
+router.post("/:agentId/customers", (req, res, next) => {
+  // req content-type validation
+  // this validation snippet should probably exist as a helper fn or express middleware
+  if (!req.is("application/json")) {
+    res.json({msg: "content-type must be application/json"})
+    return
+  }
+
+  const customer = {
+    _id: getMaxId( getJSONFile(customersPartialPath) ) + 1
+    , ...req.body
+  }
+
+  const customers = [...getJSONFile(customersPartialPath), customer]
+  setJSONFile(req, res, next, customersPartialPath, customers)
+})
+
+
 // helpers
-function getJSONFile() {
+function getMaxId(arr) {
+  // returns the largest ID from a list to use as a proxy db ID
+	let subArr = arr.map(item => item._id)
+	return Math.max.apply(null, subArr)
+}
+
+function getJSONFile(partialPath) {
   return JSON.parse(
     fs.readFileSync(
       path.resolve(
         __dirname
-        , "../data/agents.json")))
+        , partialPath)))
 }
 
-function setJSONFile(req, res, next, arr) {
+function setJSONFile(req, res, next, partialPath, arr) {
   fs.writeFile(
-    path.resolve(__dirname, "../data/agents.json")
+    path.resolve(__dirname, partialPath)
     , JSON.stringify(arr, null, 2)
     , err => {
       if (err) {
@@ -97,6 +155,11 @@ function setJSONFile(req, res, next, arr) {
       res.json({msg: "Success"})
     }
   )
+}
+
+function getCity(address) {
+  // parse city from the customer address string
+  return address.split(",")[1].trim()
 }
 
 module.exports = router

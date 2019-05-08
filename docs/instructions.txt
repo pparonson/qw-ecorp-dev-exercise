@@ -1,15 +1,17 @@
-Assumptions:
-  Provide some basic user authentication (via API Key)
-  Provide some basic error and failure handling
-
-Questions:
-  Should an end user have ability to retrieve customer data directly
-  (ie directly through an explicit customer route)?
-
-  Should there be a requirement to delete an agent?
+ASSUMPTIONS:
+  1. I provide some basic user authentication (via API Key)
+  2. I provide some very basic error and failure handling
+  3. Database persistence with async calls could improve scalability of this app
 
 
-Return List of all agents
+QUESTIONS:
+  1. Should an end user have ability to retrieve customers data directly
+  (ie directly through an explicit customers route)?
+
+  2. Should there be a requirement to delete an agent?
+
+API DOCUMENTATION:
+List all agents
 GET: /agents
   Example:  http://localhost:3000/agents?api_key=123456789&page=1
   Query String:
@@ -20,7 +22,7 @@ GET: /agents
       results
 
 
-Add a new agent
+Add new agent
 POST: /agents
   Example: http://localhost:3000/agents?api_key=123456789
   Example body:
@@ -42,9 +44,74 @@ POST: /agents
     object
 
 
-Get agent Details
+Get agent details
 GET: /agents/{:agentId}
   Example:  http://localhost:3000/agents/101?api_key=123456789
+  Query String:
+    api_key, string, required
+  Response: application/json
+    object
+
+Update agent details
+PATCH: /agents/{:agentId}
+  Example:  http://localhost:3000/agents/101?api_key=123456789
+  Example body:
+  {
+    "name": "Jane Doe",
+    "address": "123 Main Street ",
+    "city": "Golden",
+    "state": "CO",
+    "zipCode": "80403",
+    "tier": 1,
+    "phone":{
+        "primary": "303-123-4567",
+        "mobile": "720-987-6543"
+    }
+  }
+  Query String:
+    api_key, string, required
+  Response: application/json
+    object
+
+List all customers (associated an agent's INT ID)
+GET: /agents/{:agentId}/customers
+  Example:  http://localhost:3000/agents/101/customers?api_key=123456789
+  Query String:
+    api_key, string, required
+  Response: application/json
+    object
+
+Add new customer
+POST: /customers
+  Example: http://localhost:3000/customers?api_key=123456789
+  Example body:
+  {
+      "_id": 101,
+      "agent_id": 467,
+      "guid": "f7489c58-2816-44d8-b800-fa9d1f44aca0",
+      "isActive": false,
+      "balance": "$2,657.47",
+      "age": 33,
+      "eyeColor": "green",
+      "name": {
+          "first": "Solis",
+          "last": "Decker"
+      },
+      "company": "VALPREAL",
+      "email": "solis.decker@valpreal.biz",
+      "phone": "+1 (992) 542-2711",
+      "address": "193 Grove Place, Warren, Michigan, 6954",
+      "registered": "Tuesday, February 14, 2017 6:14 PM",
+      "latitude": "-58.511774",
+      "longitude": "-26.099681",
+      "tags": [
+          "esse",
+          "culpa",
+          "culpa",
+          "sit",
+          "exercitation"
+      ]
+  }
   Query String:
     api_key, string, required
   Response: application/json

@@ -1,15 +1,15 @@
 [
   {
     "_id": 101,
-    "name": "John Doe",
-    "address": "123 Main Street #200",
-    "city": "Seattle",
-    "state": "WA",
-    "zipCode": "98101",
-    "tier": 2,
+    "name": "Preston Aronson",
+    "address": "123 Maple Lane ",
+    "city": "Highlands Ranch",
+    "state": "CO",
+    "zipCode": "80129",
+    "tier": 1,
     "phone": {
-      "primary": "206-221-2345",
-      "mobile": "206-555-3211"
+      "primary": "303-123-2345",
+      "mobile": "720-123-3211"
     }
   },
   {
@@ -53,15 +53,15 @@
   },
   {
     "_id": 1988,
-    "name": "Preston Aronson",
-    "address": "300 Smith Rd",
+    "name": "Elle Belle",
+    "address": "123 Maple Lane ",
     "city": "Highlands Ranch",
     "state": "CO",
     "zipCode": "80129",
-    "tier": 3,
+    "tier": 1,
     "phone": {
-      "primary": "303-123-9999",
-      "mobile": "720-123-7777"
+      "primary": "303-123-2345",
+      "mobile": "720-123-3211"
     }
   }
 ]
