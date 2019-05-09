@@ -85,11 +85,8 @@ router.put("/:agentId", (req, res, next) => {
 router.get("/:agentId/customers", (req, res, next) => {
   const agentId = parseInt(req.params.agentId)
 
-  // find method returns undefined if no matching id
-  let agent = getJSONFile(agentsPartialPath)
-    .find( agent => agent._id === agentId )
   let customers = getJSONFile(customersPartialPath)
-    .filter(customer => customer.agent_id === agent._id)
+    .filter(customer => customer.agent_id === agentId)
   let results = customers.map(customer => {
     return {
       last: customer.name.last
