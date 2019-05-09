@@ -84,7 +84,13 @@ router.put("/:agentId", (req, res, next) => {
 // List all customers associated an agent's INT ID
 router.get("/:agentId/customers", (req, res, next) => {
   const agentId = parseInt(req.params.agentId)
+  let page = req.query.page
+  if (page === undefined) {page = 1}
 
+  // return a limited 20 items / page to allow scale
+  const startIndex = (page - 1) * 20
+
+  // NOTE: slice (pagination) method does not mutate the orig array
   let customers = getJSONFile(customersPartialPath)
     .filter(customer => customer.agent_id === agentId)
   let results = customers.map(customer => {
@@ -93,11 +99,11 @@ router.get("/:agentId/customers", (req, res, next) => {
       , first: customer.name.first
       , city: getCity(customer.address)
     }
-  })
+  }).slice( startIndex, startIndex + 19 )
 
   // return an obj with a results prop via obj literal syntax
   results.length > 0 ?
-    res.json({results}) :
+    res.json({page, results}) :
     res.json({msg: "None found"})
 })
 

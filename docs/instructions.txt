@@ -73,7 +73,7 @@ PUT: /agents/{:agentId}
 
 List all customers (associated an agent's INT ID)
 GET: /agents/{:agentId}/customers
-  Example:  http://localhost:3000/agents/101/customers?api_key=123456789
+  Example:  http://localhost:3000/agents/101/customers?api_key=123456789&page=1
   Query String:
     api_key, string, required
   Response: application/json
